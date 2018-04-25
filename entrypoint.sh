@@ -1,8 +1,8 @@
 #!/bin/bash
 
-args=$@
+args="$@"
 
-echo "Activating iptables rules..."
+#echo "Activating iptables rules..."
 /fw.sh start
 
 pid=0
@@ -27,7 +27,7 @@ term_handler() {
 trap 'kill ${!}; usr_handler' SIGUSR1
 trap 'kill ${!}; term_handler' INT QUIT TERM
 
-echo "Starting redsocks..."
+echo "Starting redsocks: (http_dns_proxy $args)"
 /usr/local/bin/https_dns_proxy $args &
 pid="$!"
 
