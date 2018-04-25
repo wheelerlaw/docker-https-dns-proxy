@@ -13,4 +13,9 @@ RUN apk update && apk add build-base curl bash git c-ares-dev curl-dev libev-dev
   && make -C https_dns_proxy \
   && cp https_dns_proxy/https_dns_proxy /usr/local/bin
 
-ENTRYPOINT ["/usr/local/bin/https_dns_proxy"]
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY fw.sh /usr/local/bin/fw.sh
+
+RUN chmod +x /usr/local/bin/*
+
+ENTRYPOINT ["/usr/local/bin/https_dns_proxy.sh"]
