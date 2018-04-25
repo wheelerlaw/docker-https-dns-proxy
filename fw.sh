@@ -25,7 +25,12 @@ fw_clear() {
   #iptables -t nat -D PREROUTING 2
 }
 
-case "$1" in
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 {device} {start|stop}"
+    exit 1
+fi
+
+case "$2" in
     start)
         echo -n "Setting DOH firewall rules..."
         fw_clear
@@ -38,7 +43,7 @@ case "$1" in
         echo "done."
         ;;
     *)
-        echo "Usage: $0 {start|stop}"
+        echo "Usage: $0 {device} {start|stop}"
         exit 1
         ;;
 esac
