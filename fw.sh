@@ -10,7 +10,7 @@ fw_setup() {
   # We then told iptables to redirect all port 53 connections to the 
   # DNS-over-HTTPS server listening on 5053
   iptables -t nat -A DOH -p tcp --dport 53 -j REDIRECT --to-ports 5053
-  iptables -t nat -A DOH -p ucp --dport 53 -j REDIRECT --to-ports 5053
+  iptables -t nat -A DOH -p udp --dport 53 -j REDIRECT --to-ports 5053
 
   iptables -t nat -A PREROUTING -i docker0 -p tcp --dport 53 -j DOH
   iptables -t nat -A PREROUTING -i docker0 -p udp --dport 53 -j DOH
