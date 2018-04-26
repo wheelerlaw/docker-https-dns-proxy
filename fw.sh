@@ -12,8 +12,8 @@ fw_setup() {
   iptables -t nat -A DOH -p tcp --dport 53 -j REDIRECT --to-ports 5053
   iptables -t nat -A DOH -p udp --dport 53 -j REDIRECT --to-ports 5053
 
-  iptables -t nat -A PREROUTING -i docker0 -p tcp --dport 53 -j DOH
-  iptables -t nat -A PREROUTING -i docker0 -p udp --dport 53 -j DOH
+  iptables -t nat -A PREROUTING -i $device -p tcp --dport 53 -j DOH
+  iptables -t nat -A PREROUTING -i $device -p udp --dport 53 -j DOH
 }
 
 ##########################
@@ -29,6 +29,8 @@ if [ $# -ne 2 ]; then
     echo "Usage: $0 {device} {start|stop}"
     exit 1
 fi
+
+device="$1"
 
 case "$2" in
     start)

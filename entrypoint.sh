@@ -1,10 +1,16 @@
 #!/bin/bash
 
-device="$1"
-shift
-args="$@"
+# Infer the device name from the IP address
+args=("$@")
+for i in $(seq 0 $#); do
+    case ${args[$i]} in
+        -a)
+        device=$(ifconfig | grep -B1 ${args[$i+1]} | grep -o "^\w*")
+        ;;
+    esac
+done
 
-#echo "Activating iptables rules..."
+echo "Activating iptables rules..."
 /fw.sh $device start
 
 pid=0
@@ -17,7 +23,7 @@ usr_handler() {
 # SIGTERM-handler
 term_handler() {
     if [ $pid -ne 0 ]; then
-        echo "Term signal catched. Shutdown https_dns_proxy and disable iptables rules..."
+        echo "Term signal caught. Shutdown https_dns_proxy and disable iptables rules..."
         kill -SIGTERM "$pid"
         wait "$pid"
         /fw.sh $device stop
@@ -29,10 +35,8 @@ term_handler() {
 trap 'kill ${!}; usr_handler' SIGUSR1
 trap 'kill ${!}; term_handler' INT QUIT TERM
 
-bind_arg="-a $(ip addr show $device | sed -n 's/.*inet \([0-9.]\+\)\/.*/\1/p')"
-
-echo "Starting redsocks: (http_dns_proxy $args $bind_arg)"
-/usr/local/bin/https_dns_proxy $args $bind_arg &
+echo "Starting http_dns_proxy: (http_dns_proxy $@)"
+/usr/local/bin/https_dns_proxy "$@" &
 pid="$!"
 
 # wait indefinetely
