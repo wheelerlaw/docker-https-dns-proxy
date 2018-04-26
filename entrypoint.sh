@@ -5,10 +5,18 @@ args=("$@")
 for i in $(seq 0 $#); do
     case ${args[$i]} in
         -a)
-        device=$(ifconfig | grep -B1 ${args[$i+1]} | grep -o "^\w*")
+        ip=${args[$i+1]}
+        ;;
+
+        -a=*)
+        arg=${args[$i]}
+        ip=${arg#*=}
         ;;
     esac
 done
+
+
+device=$(ifconfig | grep -B1 $ip | grep -o "^\w*")
 
 echo "Activating iptables rules..."
 /fw.sh $device start
