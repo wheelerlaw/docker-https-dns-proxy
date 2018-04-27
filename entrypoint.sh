@@ -77,7 +77,7 @@ trap 'kill ${!}; usr_handler' SIGUSR1
 trap 'kill ${!}; term_handler' INT QUIT TERM
 
 echo "Starting http_dns_proxy: (http_dns_proxy $@ $proxyArg)"
-/usr/local/bin/https_dns_proxy "$@" "@proxyArg" &
+eval "/usr/local/bin/https_dns_proxy $@ $proxyArg" &
 pid="$!"
 
 # wait indefinetely

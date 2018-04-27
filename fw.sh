@@ -39,13 +39,13 @@ port="$2"
 
 case "$3" in
     start)
-        echo -n "Setting DOH firewall rules for interface $device..."
+        echo -n "Setting DOH firewall rules for interface $device -> $port..."
         fw_clear
         fw_setup
         echo "done."
         ;;
     stop)
-        echo -n "Cleaning DOH firewall rules for interface $device..."
+        echo -n "Cleaning DOH firewall rules for interface $device -> $port..."
         fw_clear
         echo "done."
         ;;
