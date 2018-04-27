@@ -4,17 +4,28 @@ Wraps [https_dns_proxy](https://github.com/aarond10/https_dns_proxy) in an easy 
 
 ### Usage:
 
-```
-docker run --net=host --privileged wheelerlaw/https-dns-proxy [https_dns_proxy args]
-```
-
-You can specify the proxy server to connect through with the `-t` option:
+To run:
 
 ```
-docker run --net=host --privileged wheelerlaw/https-dns-proxy -t $http_proxy
+docker run --net=host --privileged wheelerlaw/redsocks [-a <listen-addr>] [-p <list-port>] [-t <proxy-url>] [other https_dns_proxy arguments]
 ```
 
-By default, `https_dns_proxy` will listen on `127.0.0.1`. You will probably want to change it to the `docker0` address so your other containers can connect to it:
+Options:
+
+```
+-a listen-addr         Local address to bind to. (127.0.0.1)
+-p listen-port         Local port to bind to. (5053)
+-t proxy-URL           Upstream proxy server to forward requests to (http://localhost:3128).
+```
+
+The proxy can also be specified by environment variable:
+
+```
+docker run --net=host --privileged -e http_proxy wheelerlaw/redsocks [-a <listen-addr>] [-p <list-port>]
+```
+
+
+**Note:** By default, `https_dns_proxy` will listen on `127.0.0.1`. You will probably want to change it to the `docker0` address so your other containers can connect to it:
 
 ```
 docker run --net=host --privileged wheelerlaw/https-dns-proxy -a 172.17.0.1

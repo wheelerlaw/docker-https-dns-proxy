@@ -12,14 +12,47 @@ for i in $(seq 0 $#); do
         arg=${args[$i]}
         ip=${arg#*=}
         ;;
+
+        -t)
+        proxy=${args[$i+1]}
+        ;;
+
+        -t=*)
+        arg=${args[$i]}
+        proxy=${arg#*=}
+        ;;
+
+        -p)
+        port=${args[$i+1]}
+        ;;
+
+        -p=*)
+        arg=${args[$i]}
+        port=${arg#*=}
+        ;;
+
     esac
 done
 
+if [ -z "$proxy" ]; then
+    if [ ! -z "$http_proxy" ]; then
+        proxyArg="-t $http_proxy"
+    fi
+fi
+
+if [ -z "$ip" ]; then
+    echo "No listening address specified, defaulting to 127.0.0.1"
+    ip="127.0.0.1"
+fi
+
+if [ -z "$port" ]; then
+    echo "No listening port specified, defaulting to 5053"
+    port="5053"
+fi
 
 device=$(ifconfig | grep -B1 $ip | grep -o "^\w*")
 
-echo "Activating iptables rules..."
-/fw.sh $device start
+/fw.sh $device $port start
 
 pid=0
 
@@ -34,7 +67,7 @@ term_handler() {
         echo "Term signal caught. Shutdown https_dns_proxy and disable iptables rules..."
         kill -SIGTERM "$pid"
         wait "$pid"
-        /fw.sh $device stop
+        /fw.sh $device $port stop
     fi
     exit 143; # 128 + 15 -- SIGTERM
 }
@@ -43,8 +76,8 @@ term_handler() {
 trap 'kill ${!}; usr_handler' SIGUSR1
 trap 'kill ${!}; term_handler' INT QUIT TERM
 
-echo "Starting http_dns_proxy: (http_dns_proxy $@)"
-/usr/local/bin/https_dns_proxy "$@" &
+echo "Starting http_dns_proxy: (http_dns_proxy $@ $proxyArg)"
+/usr/local/bin/https_dns_proxy "$@" "@proxyArg" &
 pid="$!"
 
 # wait indefinetely

@@ -9,8 +9,8 @@ fw_setup() {
 
   # We then told iptables to redirect all port 53 connections to the 
   # DNS-over-HTTPS server listening on 5053
-  iptables -t nat -A DOH -p tcp --dport 53 -j REDIRECT --to-ports 5053
-  iptables -t nat -A DOH -p udp --dport 53 -j REDIRECT --to-ports 5053
+  iptables -t nat -A DOH -p tcp -j REDIRECT --to-ports $port
+  iptables -t nat -A DOH -p udp -j REDIRECT --to-ports $port
 
   iptables -t nat -A PREROUTING -i $device -p tcp --dport 53 -j DOH
   iptables -t nat -A PREROUTING -i $device -p udp --dport 53 -j DOH
@@ -25,27 +25,32 @@ fw_clear() {
   #iptables -t nat -D PREROUTING 2
 }
 
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 {device} {start|stop}"
+usage() {
+  echo "Usage: $0 {device} {port} {start|stop}"
+}
+
+if [ $# -ne 3 ]; then
+    usage
     exit 1
 fi
 
 device="$1"
+port="$2"
 
-case "$2" in
+case "$3" in
     start)
-        echo -n "Setting DOH firewall rules..."
+        echo -n "Setting DOH firewall rules for interface $device..."
         fw_clear
         fw_setup
         echo "done."
         ;;
     stop)
-        echo -n "Cleaning DOH firewall rules..."
+        echo -n "Cleaning DOH firewall rules for interface $device..."
         fw_clear
         echo "done."
         ;;
     *)
-        echo "Usage: $0 {device} {start|stop}"
+        usage
         exit 1
         ;;
 esac
