@@ -52,7 +52,7 @@ fi
 
 device=$(ifconfig | grep -B1 $ip | grep -o "^\w*")
 
-/fw.sh $device $port start
+# /fw.sh $device $port start
 
 pid=0
 
@@ -67,7 +67,7 @@ term_handler() {
         echo "Term signal caught. Shutdown https_dns_proxy and disable iptables rules..."
         kill -SIGTERM "$pid"
         wait "$pid"
-        /fw.sh $device $port stop
+        # /fw.sh $device $port stop
     fi
     exit 143; # 128 + 15 -- SIGTERM
 }
