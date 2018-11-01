@@ -7,7 +7,7 @@ Wraps [https_dns_proxy](https://github.com/aarond10/https_dns_proxy) in an easy 
 To run:
 
 ```
-docker run --net=host --privileged wheelerlaw/redsocks [-a <listen-addr>] [-p <list-port>] [-t <proxy-url>] [other https_dns_proxy arguments]
+docker run --net=host --privileged wheelerlaw/https-dns-proxy [-a <listen-addr>] [-p <list-port>] [-t <proxy-url>] [other https_dns_proxy arguments]
 ```
 
 Options:
@@ -21,7 +21,7 @@ Options:
 The proxy can also be specified by environment variable:
 
 ```
-docker run --net=host --privileged -e http_proxy wheelerlaw/redsocks [-a <listen-addr>] [-p <list-port>]
+docker run --net=host --privileged -e http_proxy wheelerlaw/https-dns-proxy [-a <listen-addr>] [-p <list-port>]
 ```
 
 
